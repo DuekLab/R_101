@@ -1,0 +1,120 @@
+
+---
+title: "Lecture 2 - R Objects"
+author: "Or Duek, Ph.D"
+format: html
+output:
+  beamer_presentation: default
+  powerpoint_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction to R Objects
+
+R operates by using objects that store data and results of computations. Users create these objects to contain information such as data, results of mathematical operations, and statistical tests.
+
+## Vector Creation
+
+### Creating Vectors
+
+You can create different types of vectors in R using the `c()` and `vector()` functions. Here are examples for each type:
+
+- Numeric vectors:
+```{r}
+x <- 3
+numeric_vector <- c(1, 2, 3, 4)
+  ```
+
+- Character vectors:
+  ```{r}
+  character_vector <- c("one", "two", "three")
+  ```
+
+- Logical vectors:
+  ```{r}
+  logical_vector <- c(TRUE, FALSE, TRUE)
+  ```
+
+### Accessing Vector Elements
+
+You can access specific elements of a vector using square brackets. For example, to access the third element of the `numeric_vector`:
+  ```{r}
+  third_element <- numeric_vector[3]
+  ```
+
+## Matrix Creation
+
+### Creating Matrices
+
+You can create matrices using the `matrix()` function for two-dimensional matrices or `array()` for multi-dimensional arrays.
+
+- Example of a numeric matrix:
+  ```{r}
+  matrix_example <- matrix(1:9, nrow = 3, ncol = 3)
+  ```
+
+### Accessing Matrix Elements
+
+To access specific elements, use the row and column indices:
+  ```{r}
+  element <- matrix_example[3, 2]  # Third row, second column
+  ```
+
+## Data Frames
+
+### Creating and Manipulating Data Frames
+
+Data frames are essential in R for storing data tables. Here’s how to create a data frame:
+  ```{r}
+  df <- data.frame(
+    Column1 = c(1, 2, 3),
+    Column2 = c("A", "B", "C")
+  )
+  ```
+
+### Importing Data
+
+- Reading a CSV file:
+  ```{r}
+  data <- 
+  read.csv("~/Documents/Untitled form.csv")
+  ```
+
+## External Data File Handling
+
+### Reading and Writing Data
+
+- To read an Excel file:
+  ```{r}
+  library(readxl)
+ # excel_data <- read_excel("path/to/your/file.xlsx")
+  ```
+
+- To write data to a CSV file:
+  ```{r}
+  #write.csv(data, "path/to/your/output.csv")
+  ```
+
+## R Workspace Management
+
+### Managing the Workspace
+
+To delete an object:
+  ```{r}
+  rm(list = c("data", "df"))
+  ```
+
+### Saving Work Sessions
+
+To save all workspace objects:
+  ```{r}
+  save.image(file = "my_workspace.RData")
+  ```
+
+To save a selected list of objects:
+  ```{r}
+  save(list = c("data", "df"), file = "selected_workspace.RData")
+  ```

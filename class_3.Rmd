@@ -1,0 +1,89 @@
+---
+title: "Lecture 3 - Variables in R"
+author: "Or Duek"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  ioslides_presentation: default
+  beamer_presentation:
+    theme: Madrid
+    colortheme: dolphin
+---
+
+# Introduction to Variables in R
+
+## What are variables?
+Variables in R are objects (typically vectors) that store data. They can have different types depending on the nature of the data they store.
+
+
+# Basic Variables in R
+
+## Discrete Variable
+
+A discrete variable is a type of numerical variable that has a countable number of values between any two values.
+
+## Logical Variable
+
+Logical variables are binary, indicating `TRUE` or `FALSE` states.
+
+## Factor (Ordered Variable)
+
+Factors are the data objects in R which are used to categorize the data and store it as levels. They can store both strings and integers.
+
+
+# Useful Functions for Variables
+
+## Conditional Assignment
+
+```{r}
+# Example of conditional assignment using ifelse
+x <- c(1, 2, 3, 4, 5)
+y <- ifelse(x > 3, TRUE, FALSE)
+```
+
+## Subsetting with Conditions
+
+```{r}
+x <- c(NA,2,3,NA,5)
+x[is.na(x)] <- 0 # replace NA with 0
+```
+
+## Variables in Data Frames
+Accessing and manipulating data frame variables
+
+```{r}
+df <- data.frame(y = 1:5, z = 6:10)
+df$x <- df$y + df$z  # Create a new variable 'x' as the sum of 'y' and 'z'
+df$x[is.na(df$x)] <- 0  # Change NA values in 'x' to 0
+df$g <- ifelse(df$x >11, "high", "low")
+```
+
+## Common Errors
+```{r}
+z <- c(NA,2,3,NA,5)
+mean(z)#, na.rm = TRUE)
+
+```
+## Calculating BMI
+```{r}
+df_hw <- read.csv('Weight and Height.csv')
+df_hw$BMI <- df_hw$What.is.your.weight..in.Kg.. / ((df_hw$What.is.your.height..in.CM../100)^2)
+```
+
+## Piepelines
+
+We can do something with multiple functions or we can use pipes (|> or %>%)
+
+```{r}
+v <- c(2,3,5,6)
+mean(v)
+
+v |> mean()
+```
+## Tydiverse
+```{r}
+#v %>% mean()
+# error lets load
+library(tidyverse)
+v %>% mean()
+```
+

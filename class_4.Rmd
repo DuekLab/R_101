@@ -1,0 +1,130 @@
+---
+title: "Class 4 - Working with Data"
+author: "Or Duek"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: beamer_presentation
+---
+
+## Introduction to Working with Data Frames in R
+
+Data frames are crucial data structures in R, similar to tables in databases, which allow storing data in rows and columns.
+
+## Tasks in Working with Data Frames
+
+### Filtering, Merging, Sorting, and Reshaping Data Frames
+
+Working with data frames involves several key tasks:
+
+-   Filtering data to select specific rows based on conditions.
+-   Merging data from different sources.
+-   Sorting data based on values in one or more columns.
+-   Reshaping data frames to change their structure.
+
+## Useful Functions for Data Frames
+
+Using basic R functions and `tidyverse` functions can significantly enhance data manipulation tasks. ![Alt text](tidyverse_image.png){width=400}
+
+## Tidyverse Packages Overview
+
+`tidyverse` is a collection of R packages designed for data science tasks, making data manipulation, visualization, and analysis more convenient.
+
+## Filtering Rows and Columns in Data Frames
+
+### Row Filtering
+
+Using `filter()` and `slice()` functions to select rows based on specific criteria.
+
+```{r}
+# lets grab the weight-height data set and filter only men
+library(tidyverse)
+```
+
+## Using it
+
+```{r}
+df <- read.csv('Weight and Height.csv')
+# using tydiverse pipeline
+df %>% filter(What.is.you.gender == 'Male')
+```
+
+
+## Column Filtering
+Using `select()` to choose columns based on their names or indices.
+
+```{r}
+# now lets select only height
+df %>% select(What.is.your.height..in.CM..) 
+```
+
+## Combining Data Frames
+
+Combining data from different sources using `inner_join`, `left_join`, `right_join`, and `full_join` functions.
+
+```{r}
+?left_join
+df_age <- read.csv('age.csv')
+df_iq <- read.csv('iq.csv')
+
+df_both <- left_join(df_age, df_iq)
+```
+
+
+## Sorting Data Frames
+
+Sorting data frames with `arrange()`, based on one or more variables.
+
+```{r}
+df_both %>% arrange(IQ)
+```
+
+## If I want descending order
+```{r}
+df_both %>% arrange(desc(IQ))
+```
+
+
+## Reshaping Data Frames
+
+```{r}
+#creating a wide dataframe
+df_wide <- data.frame(
+  Name = c("Alice", "Bob"),
+  Score_2021 = c(88, 92),
+  Score_2022 = c(91, 95)
+)
+
+print(df_wide)
+```
+
+## Wide to Long Transformation
+Using `pivot_longer()` to transform data from wide format to long format.
+
+```{r}
+df_long <- df_wide %>% pivot_longer(cols=c("Score_2021","Score_2022"))
+```
+
+## Setting new variable names
+```{r}
+df_long <- df_wide %>% pivot_longer(cols=c("Score_2021","Score_2022"),
+                                  names_to = 'year', values_to = 'score')
+```
+
+## One last tyding
+lets remove this Score_ from the data
+```{r}
+df_long <- df_wide %>% pivot_longer(cols=c("Score_2021","Score_2022"),
+                                  names_to = 'year', values_to = 'score',
+                                  names_prefix = 'Score_')
+```
+
+### Long to Wide Transformation
+Using `pivot_wider()` to transform data from long format to wide format.
+```{r}
+dfw <- df_long %>% pivot_wider(names_from = year, 
+                               values_from = score)
+```
+
+
+## The Concept of Tidy Data
+
+Tidy data principles make it easier to manipulate and analyze data, where variables form columns, observations form rows, and each type of observational unit forms a table.
