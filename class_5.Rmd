@@ -2,7 +2,15 @@
 title: "Class 4 - Working with Data"
 author: "Or Duek"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
-output: 
+#output:
+ # beamer_presentation:
+  #  keep_tex: trueֹ
+   # latex_engine: xelatex
+  #  pandoc_args: ["-V", "classoption=12pt"]
+output:
+  beamer_presentation:
+    slide_level: 2
+    pandoc_args: ["-V", "aspectratio=169"]
 ---
 
 ## Introduction to Working with Data Frames in R
@@ -37,6 +45,7 @@ Using `filter()` and `slice()` functions to select rows based on specific criter
 ```{r}
 # lets grab the weight-height data set and filter only men
 library(tidyverse)
+library(janitor)
 ```
 
 ## Using it
@@ -46,6 +55,12 @@ df <- read.csv('Weight and Height.csv')
 # using tydiverse pipeline
 df %>% filter(What.is.you.gender == 'Male') 
 ```
+## Fixing the names
+
+```{r}
+df <- df %>% clean_names()
+names(df)
+```
 
 
 ## Column Filtering
@@ -53,16 +68,17 @@ Using `select()` to choose columns based on their names or indices.
 
 ```{r}
 # now lets select only height
-df %>% select(What.is.your.height..in.CM..) %>% summarise(mean= mean(What.is.your.height..in.CM..))
+df %>% select(what_is_your_height_in_cm) %>% summarise(mean= mean(what_is_your_height_in_cm),
+                                                       sd = sd(what_is_your_height_in_cm))
 ```
 ```{r}
-df %>% filter(What.is.you.gender=="Male") %>% select(What.is.your.height..in.CM.., What.is.your.weight..in.Kg..) %>%
-  summarise(mean = mean(What.is.your.height..in.CM..), 
-            meanW = mean(What.is.your.weight..in.Kg..))
+df %>% filter(what_is_you_gender=="Male") %>% select(what_is_your_height_in_cm, what_is_your_weight_in_kg) %>%
+  summarise(mean = mean(what_is_your_height_in_cm), 
+            meanW = mean(what_is_your_weight_in_kg))
 ```
 ```{r}
-df %>% filter(What.is.you.gender=="Female") %>% select(What.is.your.height..in.CM..) %>%
-  summarise(mean = mean(What.is.your.height..in.CM..))
+df %>% filter(what_is_you_gender=="Female") %>% select(what_is_your_height_in_cm) %>%
+  summarise(mean = mean(what_is_your_height_in_cm))
 ```
 
 ## Combining Data Frames
@@ -74,7 +90,7 @@ Combining data from different sources using `inner_join`, `left_join`, `right_jo
 df_age <- read.csv('age.csv')
 df_iq <- read.csv('iq.csv')
 
-df_both <- left_join(df_age, df_iq)
+df_both <- left_join(df_age, df_iq, by='id')
 ```
 
 
@@ -89,6 +105,30 @@ df_both %>% arrange(IQ)
 ## If I want descending order
 ```{r}
 df_both %>% arrange(desc(IQ))
+```
+## Summarise rows
+```{r}
+df %>% rowwise() %>% 
+  mutate(weight_height = sum(what_is_your_height_in_cm + what_is_your_weight_in_kg))
+```
+## Using sum without rowwise()
+
+```{r}
+df %>% mutate(weight_height = sum(what_is_your_height_in_cm + what_is_your_weight_in_kg))
+```
+
+## Not using rowwise but without sum
+
+```{r}
+df %>% mutate(weight_height = what_is_your_height_in_cm + what_is_your_weight_in_kg)
+```
+
+
+## Summary by groups
+```{r}
+df %>% group_by(what_is_you_gender) %>% summarise(
+  mean_height = mean(what_is_your_height_in_cm)
+)
 ```
 
 

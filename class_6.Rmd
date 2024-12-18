@@ -1,0 +1,156 @@
+---
+title: "Class 6 - Tables and Plots"
+author: "Or Duek"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  beamer_presentation:
+    slide_level: 2
+    pandoc_args: ["-V", "aspectratio=169"]
+---
+
+## Today we'll build tables and plots
+
+- R has some functions for representing tables and description
+- Most common are *table* (R base), *table1* and *gtsummary*
+
+## Table
+
+* Let's grab a dataframe and show something
+```{r message=FALSE}
+# we first load packages
+library(readxl)
+library(tidyverse)
+library(janitor)
+# we then read the data
+df <- read.csv('Weight and Height.csv')
+df <- df %>% clean_names()
+```
+
+## Show the data in table
+```{r}
+table(df$what_is_you_gender, df$what_is_your_weight_in_kg)
+```
+
+## Not the best
+Let use something better
+```{r message=FALSE}
+library(table1)
+table1(~ what_is_your_height_in_cm | what_is_you_gender, data = df)
+
+```
+
+## Lets add height and weight
+```{r}
+table1( ~ what_is_your_height_in_cm + what_is_your_weight_in_kg | what_is_you_gender, data=df)
+```
+
+# COOL!!
+
+## Lets use gtsummary now
+
+```{r message=FALSE}
+library(gtsummary)
+gtsummary::theme_gtsummary_journal("nejm")
+
+df |> select(what_is_your_height_in_cm, what_is_your_weight_in_kg, what_is_you_gender) |>   tbl_summary(by = what_is_you_gender,
+    label = list(what_is_your_height_in_cm = "Height (cm)", what_is_your_weight_in_kg = "Weight (Kg)")) |> add_p() |> bold_labels() |> add_overall()
+```
+
+# Lets do some Graphs!!
+
+## Graphs
+* Basic include
+  - plot(x,y)
+  - hist(x)
+  - pie(x)
+  - barplot(y, names.arg = x)
+
+## Use basic
+```{r}
+plot(df$what_is_your_height_in_cm, df$what_is_your_weight_in_kg)
+```
+
+## Bar
+
+```{r}
+barplot(df$what_is_your_height_in_cm)
+```
+
+
+# Introducing *ggplot2*
+
+
+## Used a lot
+* *ggplot2* is used many many times
+* you can check the link here [https://exts.ggplot2.tidyverse.org/gallery/]
+
+
+## Using it
+```{r message=FALSE}
+library(ggplot2)
+
+ggplot(df, aes(x=what_is_you_gender, y=what_is_your_height_in_cm, color = what_is_you_gender)) + geom_boxplot() + theme_minimal()
+
+```
+
+
+## Using it
+```{r}
+ggplot(df, aes(x=what_is_your_weight_in_kg, y=what_is_your_height_in_cm, color = what_is_you_gender)) + 
+  geom_point() + theme_minimal()
+```
+
+## Adding line?
+```{r}
+ggplot(df, aes(x=what_is_your_weight_in_kg, y=what_is_your_height_in_cm, color = what_is_you_gender)) + 
+  geom_point() + geom_smooth(method='lm', alpha=.2) + theme_minimal()
+```
+
+
+
+
+## Reshaping Data Frames
+
+```{r}
+#creating a wide dataframe
+df_wide <- data.frame(
+  Name = c("Alice", "Bob"),
+  Score_2021 = c(88, 92),
+  Score_2022 = c(91, 95)
+)
+
+print(df_wide)
+```
+
+## Wide to Long Transformation
+Using `pivot_longer()` to transform data from wide format to long format.
+
+```{r}
+df_long<- df_wide %>% pivot_longer(cols=c("Score_2021","Score_2022"))
+df_long
+```
+
+## Setting new variable names
+```{r}
+df_long <- df_wide %>% pivot_longer(cols=c("Score_2021","Score_2022"),
+                                  names_to = 'year', values_to = 'score')
+df_long
+```
+
+## One last tyding
+lets remove this Score_ from the data
+```{r}
+df_long <- df_wide %>% pivot_longer(cols=c("Score_2021","Score_2022"),
+                                  names_to = 'year', values_to = 'score',
+                                  names_prefix = 'Score_')
+df_long
+```
+
+### Long to Wide Transformation
+Using `pivot_wider()` to transform data from long format to wide format.
+```{r}
+dfw <- df_long %>% pivot_wider(names_from = year, 
+                               values_from = score)
+
+dfw
+```
