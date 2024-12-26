@@ -2,11 +2,7 @@
 title: "Class 7 - Wide and Long (and some more plotting)"
 author: "Or Duek"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
-#output: ioslides_presentation
-output:
-  beamer_presentation:
-    slide_level: 2
-    pandoc_args: ["-V", "aspectratio=169"]
+output: ioslides_presentation
 ---
 
 # Today we'll pivot long and wide
@@ -29,6 +25,7 @@ library(janitor)
 #creating a wide dataframe
 df_wide <- data.frame(
   Name = c("Alice", "Bob"),
+  Sex = c("Female","Male"),
   Score_2021 = c(88, 92),
   Score_2022 = c(91, 95)
 )
@@ -71,3 +68,9 @@ dfw <- df_long %>% pivot_wider(names_from = year,
 
 dfw
 ```
+
+```{r}
+df_age <- read_csv('age.csv')
+
+```
+
