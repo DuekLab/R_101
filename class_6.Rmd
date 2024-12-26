@@ -2,10 +2,7 @@
 title: "Class 6 - Tables and Plots"
 author: "Or Duek"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
-output:
-  beamer_presentation:
-    slide_level: 2
-    pandoc_args: ["-V", "aspectratio=169"]
+output: ioslides_presentation
 ---
 
 ## Today we'll build tables and plots
@@ -41,7 +38,7 @@ table1(~ what_is_your_height_in_cm | what_is_you_gender, data = df)
 
 ## Lets add height and weight
 ```{r}
-table1( ~ what_is_your_height_in_cm + what_is_your_weight_in_kg | what_is_you_gender, data=df)
+table1( ~ what_is_your_height_in_cm  + what_is_your_weight_in_kg | what_is_you_gender, data=df)
 ```
 
 # COOL!!
@@ -53,7 +50,7 @@ library(gtsummary)
 gtsummary::theme_gtsummary_journal("nejm")
 
 df |> select(what_is_your_height_in_cm, what_is_your_weight_in_kg, what_is_you_gender) |>   tbl_summary(by = what_is_you_gender,
-    label = list(what_is_your_height_in_cm = "Height (cm)", what_is_your_weight_in_kg = "Weight (Kg)")) |> add_p() |> bold_labels() |> add_overall()
+  label = list(what_is_your_height_in_cm = "Height (cm)", what_is_your_weight_in_kg = "Weight (Kg)")) |> add_p() |> add_overall()
 ```
 
 # Lets do some Graphs!!
@@ -89,21 +86,26 @@ barplot(df$what_is_your_height_in_cm)
 ```{r message=FALSE}
 library(ggplot2)
 
-ggplot(df, aes(x=what_is_you_gender, y=what_is_your_height_in_cm, color = what_is_you_gender)) + geom_boxplot() + theme_minimal()
-
+ggplot(df, aes(x=what_is_you_gender, y=what_is_your_height_in_cm, 
+               fill=what_is_you_gender)) + 
+  geom_boxplot() + theme_minimal()
+               
 ```
 
 
 ## Using it
 ```{r}
-ggplot(df, aes(x=what_is_your_weight_in_kg, y=what_is_your_height_in_cm, color = what_is_you_gender)) + 
+ggplot(df, aes(x=what_is_your_weight_in_kg, y=what_is_your_height_in_cm
+               , color = what_is_you_gender)) + 
   geom_point() + theme_minimal()
 ```
 
 ## Adding line?
 ```{r}
-ggplot(df, aes(x=what_is_your_weight_in_kg, y=what_is_your_height_in_cm, color = what_is_you_gender)) + 
-  geom_point() + geom_smooth(method='lm', alpha=.2) + theme_minimal()
+ggplot(df, aes(x=what_is_your_weight_in_kg, y=what_is_your_height_in_cm,
+               color=what_is_you_gender)) + 
+  geom_point() + geom_smooth(method= 'lm', alpha = .1) + theme_minimal() +
+  labs(x="Kg")
 ```
 
 
