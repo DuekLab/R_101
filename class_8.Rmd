@@ -1,0 +1,126 @@
+---
+title: "Students Depression"
+author: "Or Duek"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+library(janitor)
+library(gtsummary)
+```
+
+## Student's Depression Dataset
+
+We now load and start to play with Student's depression dataset
+
+```{r read_data}
+df <- read.csv('students_depression_data.csv')
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r}
+summary(df)
+```
+We can see that gender is a character - we want it to be a factor (also profession, degree, dietary habits, suicidal thoughts)
+We can also see names of variables are not cool
+
+
+```{r}
+df <- janitor::clean_names(df)
+summary(df)
+```
+
+```{r }
+df <- df %>% mutate(
+  profession = as.factor(profession),
+  degree  = as.factor(degree),
+  have_you_ever_had_suicidal_thoughts = as.factor(have_you_ever_had_suicidal_thoughts),
+  gender = as.factor(gender), 
+  dietary_habits = as.factor(dietary_habits),
+  family_history_of_mental_illness = as.factor(family_history_of_mental_illness)
+  
+)
+```
+
+
+Ok, lets see now
+
+```{r}
+summary(df)
+```
+
+## Lets do table of gender and depression
+
+```{r echo=FALSE}
+df %>% select(gender, depression) %>%
+  tbl_summary(
+    by = gender
+  ) %>% add_p()
+```
+
+Ohh - depression is 0 or 1 but R read it as a numeric variable. We need to change it
+
+```{r}
+df <- df %>% mutate(
+  depression = as.factor(depression)
+)
+```
+
+# Now lets plot it?
+
+```{r}
+ggplot(df, aes(x=gender, y=depression, color = gender)) + geom_count() + 
+     theme_minimal()
+```
+
+## Ok(ish), lets try something else
+```{r}
+df %>%
+  dplyr::count(gender, depression) %>% ggplot(aes(x = gender, y = n, fill = depression)) +
+  geom_bar(stat="identity", position = "dodge") +
+  labs(title = "Depression Status by Gender",
+       x = "Gender",
+       y = "Count",
+       fill = "Depression") +
+  theme_minimal()
+```
+### Lets make it stacked
+```{r}
+df %>%
+  dplyr::count(gender, depression) %>% ggplot(aes(x = depression, y = n, fill = gender)) +
+  geom_bar(stat = "identity", position = "stack") + scale_fill_manual(values = c("Male" = "#1f77b4", "Female" = "#ff7f0e")) +
+  labs(title = "Depression Status by Gender",
+       x = "Depression",
+       y = "Count",
+       fill = "Gender") + 
+  theme_minimal()
+```
+
+## Let's test if there is a difference between Gender in financial stress
+
+
+```{r}
+ggplot(df, aes(x=gender, y = financial_stress, fill= gender)) + geom_boxplot() +
+    theme_minimal()
+```
+
+Now we run a t-test
+```{r}
+t.test(financial_stress ~ gender, data=df)
+
+```
+## Let's test GPA and sleep
+```{r}
+ggplot(df, aes(x=sleep_duration, y=cgpa, fill=sleep_duration, color = sleep_duration)) + geom_jitter(alpha=.01) + geom_boxplot() +
+  theme_minimal()
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
